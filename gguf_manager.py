@@ -4,11 +4,33 @@ import subprocess
 import os
 import tempfile
 import sys
+import requests
+import base64
 from typing import Dict, Any
 from config_handler import ConfigHandler
 from utils import logger, validate_file_path
 
 RUST_BINARY = "./target/release/gguf_modifier"
+REPO_URL = "https://api.github.com/repos/username/gguf-manager/contents"
+SCRIPT_VERSION = "1.0.0"  # Current version of the script
+
+def check_for_updates():
+    try:
+        response = requests.get(f"{REPO_URL}/gguf_manager.py")
+        if response.status_code == 200:
+            content = response.json()['content']
+            decoded_content = base64.b64decode(content).decode('utf-8')
+            for line in decoded_content.split('\n'):
+                if line.startswith("SCRIPT_VERSION ="):
+                    latest_version = line.split("=")[1].strip().strip('"')
+                    if latest_version != SCRIPT_VERSION:
+                        print(f"A new version ({latest_version}) is available. Please update your script.")
+                    return
+        print("Failed to check for updates.")
+    except Exception as e:
+        print(f"Error checking for updates: {e}")
+
+check_for_updates()
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="GGUF Metadata Manager")
