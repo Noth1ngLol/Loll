@@ -1,2 +1,11 @@
+[package]
+name = "gguf_modifier"
+version = "0.1.0"
+edition = "2021"
+
+# Dependencies
+[dependencies]
+serde_json = "1.0"
+
 [dependencies]
 serde_json = "1.0"
